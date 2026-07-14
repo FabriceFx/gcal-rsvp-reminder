@@ -41,7 +41,3 @@ When organizing meetings, participants often forget to confirm their attendance.
 1. Copy the `Code.gs` and `email.html` files into a new Google Apps Script project.
 2. Run the `ajoutTrigger()` function once to authorize the script and install the daily trigger.
 3. That's it! Your reminders will now be sent automatically.
-
----
-
-**Tags:** `google-apps-script` `google-calendar` `rsvp-reminder` `automation` `productivity` `javascript`
