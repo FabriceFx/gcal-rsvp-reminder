@@ -19,8 +19,9 @@ Lorsque l'on organise des réunions, il est fréquent que certains participants 
 ### Installation
 
 1. Copiez les fichiers `Code.gs` et `email.html` dans un nouveau projet Google Apps Script.
-2. Exécutez une première fois la fonction `ajoutTrigger()` pour autoriser le script et installer le déclencheur quotidien.
-3. C'est tout ! Vos rappels partiront désormais tout seuls.
+2. Dans l'éditeur, sélectionnez la fonction `ajoutTrigger` dans le menu déroulant en haut de l'écran, puis cliquez sur le bouton **Exécuter**.
+3. Une fenêtre apparaîtra : acceptez et accordez les autorisations nécessaires demandées par Google.
+4. C'est tout ! Le déclencheur automatique est installé et vos rappels partiront désormais tout seuls.
 
 ---
 
@@ -39,5 +40,6 @@ When organizing meetings, participants often forget to confirm their attendance.
 ### Installation
 
 1. Copy the `Code.gs` and `email.html` files into a new Google Apps Script project.
-2. Run the `ajoutTrigger()` function once to authorize the script and install the daily trigger.
-3. That's it! Your reminders will now be sent automatically.
+2. In the editor, select the `ajoutTrigger` function from the dropdown menu at the top, then click the **Run** button.
+3. A popup will appear: accept and grant the necessary permissions requested by Google.
+4. That's it! The automated trigger is installed and your reminders will now be sent automatically.
