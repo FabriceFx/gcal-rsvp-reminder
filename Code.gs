@@ -27,7 +27,8 @@ const CONFIG = {
   TEMPLATE_FILE: 'email',
   TRIGGER_HOUR: 8,
   TRIGGER_MINUTE: 1,
-  FUNCTION_NAME: 'rappels'
+  FUNCTION_NAME: 'rappels',
+  SENDER_NAME: '' // Laissez vide pour utiliser par défaut le nom du compte/calendrier
 };
 
 /**
@@ -49,7 +50,7 @@ const rappels = () => {
     // Textes pour l'e-mail (Code)
     const textes = {
       fr: {
-        sujet: (titre, heureDebut) => `Rappel pour ${titre} | ⏰ ${heureDebut} heure.`,
+        sujet: (titre, heureDebut) => `Rappel pour ${titre} | ⏰ ${heureDebut}`,
         secours: "Veuillez activer l'affichage HTML pour voir ce message.",
         salutation: "Bonjour,",
         messageNonRepondu_1: "Vous n'avez pas encore répondu à la demande de rendez-vous",
@@ -72,8 +73,15 @@ const rappels = () => {
       }
     };
 
-    const nomExpediteur = calendrierParDefaut.getName();
+    const nomExpediteur = CONFIG.SENDER_NAME || calendrierParDefaut.getName();
     
+    // Vérification initiale du quota
+    let quotaRestant = MailApp.getRemainingDailyQuota();
+    if (quotaRestant <= 0) {
+      console.warn("Quota d'envoi d'e-mails épuisé pour aujourd'hui. Fin de l'exécution.");
+      return;
+    }
+
     // Préparation du template HTML (optimisation : chargé une seule fois)
     const modeleHtml = HtmlService.createTemplateFromFile(CONFIG.TEMPLATE_FILE);
 
@@ -94,10 +102,24 @@ const rappels = () => {
       const titre = evenement.getTitle();
       const description = evenement.getDescription();
       const idEvenement = evenement.getId().split('@')[0];
-      const heureDebut = Utilities.formatDate(evenement.getStartTime(), fuseauHoraireScript, 'HH:mm');
-      const sujet = textes[langue].sujet(titre, heureDebut);
+      
+      // Formatage de l'heure selon la langue (ex: 14h30 en FR, 02:30 PM en EN)
+      let heureDebutFormat = '';
+      if (langue === 'fr') {
+        heureDebutFormat = Utilities.formatDate(evenement.getStartTime(), fuseauHoraireScript, 'HH:mm').replace(':', 'h');
+      } else {
+        heureDebutFormat = Utilities.formatDate(evenement.getStartTime(), fuseauHoraireScript, 'hh:mm a');
+      }
+
+      const sujet = textes[langue].sujet(titre, heureDebutFormat);
 
       for (const invite of invitesEnAttente) {
+        // Vérification du quota avant envoi
+        if (quotaRestant <= 0) {
+          console.warn(`Quota d'envoi d'e-mails épuisé en cours d'exécution (événement: "${titre}").`);
+          return; // Arrêt complet pour éviter les erreurs MailApp en cascade
+        }
+
         try {
           const email = invite.getEmail();
 
@@ -121,6 +143,8 @@ const rappels = () => {
             cc: emailUtilisateurActuel,
             htmlBody: corpsHtml
           });
+
+          quotaRestant--; // Décrémenter le quota localement après succès
         } catch (erreurEmail) {
           console.error(`Erreur lors de l'envoi du rappel à ${invite.getEmail()} pour l'événement "${titre}" : ${erreurEmail.message}`);
         }
@@ -128,6 +152,17 @@ const rappels = () => {
     }
   } catch (erreur) {
     console.error(`Erreur critique globale lors de l'exécution du script : ${erreur.message}`);
+    // Notification active par email à l'administrateur
+    try {
+      const emailAlerte = Session.getEffectiveUser().getEmail();
+      MailApp.sendEmail({
+        to: emailAlerte,
+        subject: "⚠️ Erreur critique : Script Rappel Google Agenda",
+        body: `Une erreur est survenue lors de l'exécution de vos relances RSVP :\n\n${erreur.message}\n\nVérifiez l'éditeur Apps Script pour plus de détails.`
+      });
+    } catch (e) {
+      // Échec silencieux si plus de quota pour alerter
+    }
   }
 };
 
