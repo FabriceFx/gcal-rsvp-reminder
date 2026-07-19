@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?= data[3] ?>">
+<html lang="<?= langue ?>">
   <head>
     <base target="_top">
   </head>
@@ -8,64 +8,39 @@
     <!-- Conteneur principal (Format carte) -->
     <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 35px; border-radius: 8px; border: 1px solid #dadce0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
       
-      <? if (data[3] === 'fr') { ?>
-      <p style="font-size: 16px; margin-top: 0;">Bonjour,</p>
+      <p style="font-size: 16px; margin-top: 0;"><?= traductions.salutation; ?></p>
       <p>
-        Vous n'avez pas encore répondu à la demande de rendez-vous <strong><?= data[0]; ?></strong> prévue pour aujourd'hui.
+        <?= traductions.messageNonRepondu_1; ?> <strong><?= titre; ?></strong> <?= traductions.messageNonRepondu_2; ?>
       </p>
-      <? } else { ?>
-      <p style="font-size: 16px; margin-top: 0;">Hello,</p>
-      <p>
-        You have not yet responded to the meeting request <strong><?= data[0]; ?></strong> scheduled for today.
-      </p>
-      <? } ?>
       
       <!-- Zone de la description conditionnelle : ne s'affiche que si l'événement contient une description -->
-      <? if (data[1] && data[1] !== '') { ?>
+      <? if (description && description !== '') { ?>
         <div style="background-color: #f8f9fa; border-left: 4px solid #1a73e8; padding: 12px 16px; margin: 20px 0; color: #5f6368; font-size: 14px;">
-          <?= data[1]; ?>
+          <?= description; ?>
         </div>
       <? } ?>
       
-      <? if (data[3] === 'fr') { ?>
       <p style="margin-bottom: 25px;">
-        Merci de nous indiquer si vous serez présent(e) en cliquant sur le bouton ci-dessous :
+        <?= traductions.demandePresence; ?>
       </p>
-      <? } else { ?>
-      <p style="margin-bottom: 25px;">
-        Please let us know if you will be attending by clicking the button below:
-      </p>
-      <? } ?>
       
       <!-- Bouton d'action -->
       <div style="text-align: center; margin: 30px 0;">
-        <a href="<?= data[2]; ?>" style="background-color: #1a73e8; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: bold; font-size: 15px; display: inline-block;">
-          <?= data[3] === 'fr' ? 'Indiquer ma présence' : 'RSVP' ?>
+        <a href="<?= lienReunion; ?>" style="background-color: #1a73e8; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 6px; font-weight: bold; font-size: 15px; display: inline-block;">
+          <?= traductions.boutonRSVP; ?>
         </a>
       </div>
       
-      <? if (data[3] === 'fr') { ?>
       <p style="margin-bottom: 0;">
-        Cordialement,
+        <?= traductions.salutationFin; ?>
       </p>
-      <? } else { ?>
-      <p style="margin-bottom: 0;">
-        Best regards,
-      </p>
-      <? } ?>
 
       <!-- Pied de page -->
       <hr style="border: none; border-top: 1px solid #eeeeee; margin-top: 40px; margin-bottom: 20px;">
       
-      <? if (data[3] === 'fr') { ?>
       <p style="font-size: 12px; color: #9aa0a6; text-align: center; margin: 0;">
-        <em>Mail envoyé automatiquement via un script du blog <a href="https://atelier-informatique.com" style="color: #9aa0a6; text-decoration: underline;">L'atelier informatique</a>.</em>
+        <em><?= traductions.footerInfo; ?> <a href="https://faucheux.bzh" style="color: #9aa0a6; text-decoration: underline;">Fabrice Faucheux</a>.</em>
       </p>
-      <? } else { ?>
-      <p style="font-size: 12px; color: #9aa0a6; text-align: center; margin: 0;">
-        <em>Email sent automatically via a script from the blog <a href="https://atelier-informatique.com" style="color: #9aa0a6; text-decoration: underline;">L'atelier informatique</a>.</em>
-      </p>
-      <? } ?>
 
     </div>
     

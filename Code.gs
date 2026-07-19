@@ -35,81 +35,99 @@ const CONFIG = {
  */
 const rappels = () => {
   try {
-    const today = new Date();
-    const defaultCalendar = CalendarApp.getDefaultCalendar();
-    const events = defaultCalendar.getEventsForDay(today);
+    const aujourdHui = new Date();
+    const calendrierParDefaut = CalendarApp.getDefaultCalendar();
+    const evenements = calendrierParDefaut.getEventsForDay(aujourdHui);
 
-    const scriptTimeZone = Session.getScriptTimeZone();
-    const currentUserEmail = Session.getEffectiveUser().getEmail();
+    const fuseauHoraireScript = Session.getScriptTimeZone();
+    const emailUtilisateurActuel = Session.getEffectiveUser().getEmail();
 
     // Détection de la langue de l'utilisateur
-    const userLocale = Session.getActiveUserLocale();
-    const lang = (userLocale && userLocale.toLowerCase().startsWith('fr')) ? 'fr' : 'en';
+    const langueUtilisateur = Session.getActiveUserLocale();
+    const langue = (langueUtilisateur && langueUtilisateur.toLowerCase().startsWith('fr')) ? 'fr' : 'en';
 
     // Textes pour l'e-mail (Code)
-    const t = {
+    const textes = {
       fr: {
-        subject: (title, startTime) => `Rappel pour ${title} | ⏰ ${startTime} heure.`,
-        fallback: "Veuillez activer l'affichage HTML pour voir ce message."
+        sujet: (titre, heureDebut) => `Rappel pour ${titre} | ⏰ ${heureDebut} heure.`,
+        secours: "Veuillez activer l'affichage HTML pour voir ce message.",
+        salutation: "Bonjour,",
+        messageNonRepondu_1: "Vous n'avez pas encore répondu à la demande de rendez-vous",
+        messageNonRepondu_2: "prévue pour aujourd'hui.",
+        demandePresence: "Merci de nous indiquer si vous serez présent(e) en cliquant sur le bouton ci-dessous :",
+        boutonRSVP: "Indiquer ma présence",
+        salutationFin: "Cordialement,",
+        footerInfo: "Mail envoyé automatiquement via un script de"
       },
       en: {
-        subject: (title, startTime) => `Reminder: ${title} | ⏰ ${startTime}`,
-        fallback: "Please enable HTML view to see this message."
+        sujet: (titre, heureDebut) => `Reminder: ${titre} | ⏰ ${heureDebut}`,
+        secours: "Please enable HTML view to see this message.",
+        salutation: "Hello,",
+        messageNonRepondu_1: "You have not yet responded to the meeting request",
+        messageNonRepondu_2: "scheduled for today.",
+        demandePresence: "Please let us know if you will be attending by clicking the button below:",
+        boutonRSVP: "RSVP",
+        salutationFin: "Best regards,",
+        footerInfo: "Email sent automatically via a script by"
       }
     };
 
-    const senderName = defaultCalendar.getName();
+    const nomExpediteur = calendrierParDefaut.getName();
     
     // Préparation du template HTML (optimisation : chargé une seule fois)
-    const htmlTemplate = HtmlService.createTemplateFromFile(CONFIG.TEMPLATE_FILE);
+    const modeleHtml = HtmlService.createTemplateFromFile(CONFIG.TEMPLATE_FILE);
 
-    for (const event of events) {
+    for (const evenement of evenements) {
       // Ignorer les événements dont on n'est pas le propriétaire
-      if (!event.isOwnedByMe()) continue;
+      if (!evenement.isOwnedByMe()) continue;
       
       // Ignorer les événements dont l'heure de début est déjà passée
-      if (event.getStartTime() < today) continue;
+      if (evenement.getStartTime() < aujourdHui) continue;
 
-      const guests = event.getGuestList(false);
+      const invites = evenement.getGuestList(false);
       // Filtrer uniquement les invités n'ayant pas répondu
-      const pendingGuests = guests.filter(guest => guest.getGuestStatus() === CalendarApp.GuestStatus.INVITED);
+      const invitesEnAttente = invites.filter(invite => invite.getGuestStatus() === CalendarApp.GuestStatus.INVITED);
 
-      if (pendingGuests.length === 0) continue;
+      if (invitesEnAttente.length === 0) continue;
 
       // Extraction des données communes à l'événement
-      const title = event.getTitle();
-      const description = event.getDescription();
-      const eventId = event.getId().split('@')[0];
-      const startTime = Utilities.formatDate(event.getStartTime(), scriptTimeZone, 'HH:mm');
-      const subject = t[lang].subject(title, startTime);
+      const titre = evenement.getTitle();
+      const description = evenement.getDescription();
+      const idEvenement = evenement.getId().split('@')[0];
+      const heureDebut = Utilities.formatDate(evenement.getStartTime(), fuseauHoraireScript, 'HH:mm');
+      const sujet = textes[langue].sujet(titre, heureDebut);
 
-      for (const guest of pendingGuests) {
+      for (const invite of invitesEnAttente) {
         try {
-          const email = guest.getEmail();
+          const email = invite.getEmail();
 
           // Création de l'ID compatible avec les URL de Google Agenda 
-          const encodedId = Utilities.base64EncodeWebSafe(`${eventId} ${email}`).replace(/=/g, '');
+          const idEncode = Utilities.base64EncodeWebSafe(`${idEvenement} ${email}`).replace(/=/g, '');
 
           // Utilisation de l'URL moderne Google Agenda
-          const meetingLink = `https://calendar.google.com/calendar/event?action=VIEW&eid=${encodedId}`;
+          const lienReunion = `https://calendar.google.com/calendar/event?action=VIEW&eid=${idEncode}`;
 
           // Injection des données et génération du HTML
-          htmlTemplate.data = [title, description, meetingLink, lang];
-          const htmlBody = htmlTemplate.evaluate().getContent();
+          modeleHtml.langue = langue;
+          modeleHtml.traductions = textes[langue];
+          modeleHtml.titre = titre;
+          modeleHtml.description = description;
+          modeleHtml.lienReunion = lienReunion;
+          const corpsHtml = modeleHtml.evaluate().getContent();
 
           // Envoi de l'email avec le nom récupéré dynamiquement
-          GmailApp.sendEmail(email, subject, t[lang].fallback, {
-            name: senderName,
-            cc: currentUserEmail,
-            htmlBody: htmlBody
+          GmailApp.sendEmail(email, sujet, textes[langue].secours, {
+            name: nomExpediteur,
+            cc: emailUtilisateurActuel,
+            htmlBody: corpsHtml
           });
-        } catch (emailError) {
-          console.error(`Erreur lors de l'envoi du rappel à ${guest.getEmail()} pour l'événement "${title}" : ${emailError.message}`);
+        } catch (erreurEmail) {
+          console.error(`Erreur lors de l'envoi du rappel à ${invite.getEmail()} pour l'événement "${titre}" : ${erreurEmail.message}`);
         }
       }
     }
-  } catch (error) {
-    console.error(`Erreur critique globale lors de l'exécution du script : ${error.message}`);
+  } catch (erreur) {
+    console.error(`Erreur critique globale lors de l'exécution du script : ${erreur.message}`);
   }
 };
 
@@ -119,10 +137,10 @@ const rappels = () => {
  */
 const ajoutTrigger = () => {
   // Nettoyage des anciens triggers
-  const triggers = ScriptApp.getProjectTriggers();
-  for (const trigger of triggers) {
-    if (trigger.getHandlerFunction() === CONFIG.FUNCTION_NAME) {
-      ScriptApp.deleteTrigger(trigger);
+  const declencheurs = ScriptApp.getProjectTriggers();
+  for (const declencheur of declencheurs) {
+    if (declencheur.getHandlerFunction() === CONFIG.FUNCTION_NAME) {
+      ScriptApp.deleteTrigger(declencheur);
     }
   }
 
