@@ -28,7 +28,8 @@ const CONFIG = {
   TRIGGER_HOUR: 8,
   TRIGGER_MINUTE: 1,
   FUNCTION_NAME: 'rappels',
-  SENDER_NAME: '' // Laissez vide pour utiliser par défaut le nom du compte/calendrier
+  SENDER_NAME: '', // Laissez vide pour utiliser par défaut le nom du compte/calendrier
+  LANGUE: 'fr' // Forcez la langue ici ('fr' ou 'en') car la détection automatique échoue souvent en tâche de fond
 };
 
 /**
@@ -43,9 +44,8 @@ const rappels = () => {
     const fuseauHoraireScript = Session.getScriptTimeZone();
     const emailUtilisateurActuel = Session.getEffectiveUser().getEmail();
 
-    // Détection de la langue de l'utilisateur
-    const langueUtilisateur = Session.getActiveUserLocale();
-    const langue = (langueUtilisateur && langueUtilisateur.toLowerCase().startsWith('fr')) ? 'fr' : 'en';
+    // Utilisation de la langue forcée dans la configuration (la détection automatique en arrière-plan renvoie souvent 'en')
+    const langue = CONFIG.LANGUE || 'fr';
 
     // Textes pour l'e-mail (Code)
     const textes = {
