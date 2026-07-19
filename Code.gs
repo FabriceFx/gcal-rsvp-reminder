@@ -103,15 +103,12 @@ const rappels = () => {
       const description = evenement.getDescription();
       const idEvenement = evenement.getId().split('@')[0];
       
-      // Formatage de l'heure selon la langue (ex: 14h30 en FR, 02:30 PM en EN)
-      let heureDebutFormat = '';
-      if (langue === 'fr') {
-        heureDebutFormat = Utilities.formatDate(evenement.getStartTime(), fuseauHoraireScript, 'HH:mm').replace(':', 'h');
-      } else {
-        heureDebutFormat = Utilities.formatDate(evenement.getStartTime(), fuseauHoraireScript, 'hh:mm a');
-      }
+      // Formatage de l'heure
+      const heureFr = Utilities.formatDate(evenement.getStartTime(), fuseauHoraireScript, 'HH:mm').replace(':', 'h');
+      const heureEn = Utilities.formatDate(evenement.getStartTime(), fuseauHoraireScript, 'hh:mm a');
 
-      const sujet = textes[langue].sujet(titre, heureDebutFormat);
+      // Sujet bilingue
+      const sujet = `Rappel / Reminder : ${titre} | ⏰ ${heureFr} (${heureEn})`;
 
       for (const invite of invitesEnAttente) {
         // Vérification du quota avant envoi
@@ -129,16 +126,16 @@ const rappels = () => {
           // Utilisation de l'URL moderne Google Agenda
           const lienReunion = `https://calendar.google.com/calendar/event?action=VIEW&eid=${idEncode}`;
 
-          // Injection des données et génération du HTML
-          modeleHtml.langue = langue;
-          modeleHtml.traductions = textes[langue];
+          // Injection des données et génération du HTML bilingue
+          modeleHtml.traductionsFr = textes.fr;
+          modeleHtml.traductionsEn = textes.en;
           modeleHtml.titre = titre;
           modeleHtml.description = description;
           modeleHtml.lienReunion = lienReunion;
           const corpsHtml = modeleHtml.evaluate().getContent();
 
           // Envoi de l'email avec le nom récupéré dynamiquement
-          GmailApp.sendEmail(email, sujet, textes[langue].secours, {
+          GmailApp.sendEmail(email, sujet, `${textes.fr.secours} / ${textes.en.secours}`, {
             name: nomExpediteur,
             cc: emailUtilisateurActuel,
             htmlBody: corpsHtml

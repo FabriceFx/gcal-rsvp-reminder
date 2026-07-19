@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<?= langue ?>">
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base target="_top">
@@ -13,12 +13,12 @@
     <!-- Conteneur principal (Format carte premium) -->
     <div style="max-width: 580px; margin: 0 auto; background-color: #ffffff; padding: 40px; border-radius: 16px; border: 1px solid #e5e7eb; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);">
       
-      <p style="font-size: 18px; font-weight: 600; margin-top: 0; color: #111827;"><?= traductions.salutation; ?></p>
+      <!-- Version Française -->
+      <p style="font-size: 18px; font-weight: 600; margin-top: 0; color: #111827;"><?= traductionsFr.salutation; ?></p>
       <p style="color: #4b5563;">
-        <?= traductions.messageNonRepondu_1; ?> <strong style="color: #2563eb; font-weight: 600;"><?= titre; ?></strong> <?= traductions.messageNonRepondu_2; ?>
+        <?= traductionsFr.messageNonRepondu_1; ?> <strong style="color: #2563eb; font-weight: 600;"><?= titre; ?></strong> <?= traductionsFr.messageNonRepondu_2; ?>
       </p>
       
-      <!-- Zone de la description conditionnelle -->
       <? if (description && description !== '') { ?>
         <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 24px 0; color: #475569; font-size: 15px; border-radius: 0 8px 8px 0;">
           <?= description; ?>
@@ -26,25 +26,52 @@
       <? } ?>
       
       <p style="margin-bottom: 30px; color: #4b5563;">
-        <?= traductions.demandePresence; ?>
+        <?= traductionsFr.demandePresence; ?>
       </p>
       
-      <!-- Bouton d'action -->
       <div style="text-align: center; margin: 35px 0;">
         <a href="<?= lienReunion; ?>" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -2px rgba(37, 99, 235, 0.2); transition: all 0.2s ease;">
-          <?= traductions.boutonRSVP; ?>
+          <?= traductionsFr.boutonRSVP; ?>
         </a>
       </div>
       
       <p style="margin-bottom: 0; color: #4b5563;">
-        <?= traductions.salutationFin; ?>
+        <?= traductionsFr.salutationFin; ?>
+      </p>
+
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 40px 0;">
+
+      <!-- English Version -->
+      <p style="font-size: 18px; font-weight: 600; margin-top: 0; color: #111827;"><?= traductionsEn.salutation; ?></p>
+      <p style="color: #4b5563;">
+        <?= traductionsEn.messageNonRepondu_1; ?> <strong style="color: #2563eb; font-weight: 600;"><?= titre; ?></strong> <?= traductionsEn.messageNonRepondu_2; ?>
+      </p>
+      
+      <? if (description && description !== '') { ?>
+        <div style="background-color: #f8fafc; border-left: 4px solid #3b82f6; padding: 16px 20px; margin: 24px 0; color: #475569; font-size: 15px; border-radius: 0 8px 8px 0;">
+          <?= description; ?>
+        </div>
+      <? } ?>
+      
+      <p style="margin-bottom: 30px; color: #4b5563;">
+        <?= traductionsEn.demandePresence; ?>
+      </p>
+      
+      <div style="text-align: center; margin: 35px 0;">
+        <a href="<?= lienReunion; ?>" style="background-color: #2563eb; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; display: inline-block; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -2px rgba(37, 99, 235, 0.2); transition: all 0.2s ease;">
+          <?= traductionsEn.boutonRSVP; ?>
+        </a>
+      </div>
+      
+      <p style="margin-bottom: 0; color: #4b5563;">
+        <?= traductionsEn.salutationFin; ?>
       </p>
 
       <!-- Pied de page -->
       <hr style="border: none; border-top: 1px solid #e5e7eb; margin-top: 40px; margin-bottom: 20px;">
       
       <p style="font-size: 13px; color: #9ca3af; text-align: center; margin: 0;">
-        <em><?= traductions.footerInfo; ?> <a href="https://faucheux.bzh" style="color: #9ca3af; text-decoration: underline;">Fabrice Faucheux</a>.</em>
+        <em><?= traductionsFr.footerInfo; ?> / <?= traductionsEn.footerInfo; ?> <a href="https://faucheux.bzh" style="color: #9ca3af; text-decoration: underline;">Fabrice Faucheux</a>.</em>
       </p>
 
     </div>
