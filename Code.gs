@@ -146,7 +146,7 @@ const rappels = () => {
 
           quotaRestant--; // Décrémenter le quota localement après succès
         } catch (erreurEmail) {
-          console.error(`Erreur lors de l'envoi du rappel à ${invite.getEmail()} pour l'événement "${titre}" : ${erreurEmail.message}`);
+          console.error(`Erreur lors de l'envoi du rappel pour un événement (${idEvenement}) : ${erreurEmail.message}`);
         }
       }
     }
@@ -186,4 +186,41 @@ const ajoutTrigger = () => {
     .atHour(CONFIG.TRIGGER_HOUR)
     .nearMinute(CONFIG.TRIGGER_MINUTE)
     .create();
+};
+
+/**
+ * Menu "À propos" exigé par les consignes.
+ */
+const onOpen = (e) => {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    ui.createMenu('GCal Reminder')
+      .addItem('À propos', 'afficherAPropos')
+      .addToUi();
+  } catch (error) {
+    // Échec silencieux si le script est autonome et n'a pas d'interface utilisateur (UI) attachée
+  }
+};
+
+/**
+ * Affiche la modale À propos avec les informations du développeur.
+ */
+const afficherAPropos = () => {
+  const html = HtmlService.createHtmlOutput(`
+    <div style="font-family: 'Outfit', sans-serif; text-align: center; padding: 20px;">
+      <h2>GCal RSVP Reminder</h2>
+      <p>Un outil pour automatiser vos relances Google Agenda.</p>
+      <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+      <p>Développé par : <strong>Fabrice Faucheux</strong></p>
+      <p><a href="https://faucheux.bzh" target="_blank" style="color: #2563eb; text-decoration: none;">https://faucheux.bzh</a></p>
+    </div>
+  `)
+  .setWidth(350)
+  .setHeight(250);
+  
+  try {
+    SpreadsheetApp.getUi().showModalDialog(html, 'À propos');
+  } catch(e) {
+    // Échec silencieux si aucune UI
+  }
 };

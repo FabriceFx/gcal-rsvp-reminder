@@ -10,7 +10,8 @@ Un script Google Apps Script simple et efficace pour relancer automatiquement le
 
 ### L'intérêt de l'outil
 
-Lorsque l'on organise des réunions, il est fréquent que certains participants oublient de confirmer leur présence. Ce script vous fait gagner du temps en automatisant les rappels :
+**23h, la veille d'une réunion cruciale.** Vous parcourez la liste des invités et réalisez que la moitié d'entre eux n'a pas daigné répondre à l'invitation. Allez-vous les relancer un par un manuellement, en craignant qu'ils ne viennent pas, ou perdre un temps précieux à suivre l'état de chacun ? 
+Ne laissez plus l'incertitude vous faire perdre votre temps. Ce script vous libère de cette charge mentale en automatisant les rappels :
 - **Entièrement automatique** : S'exécute chaque jour (par exemple à 8h01) pour vérifier les événements de la journée.
 - **Ciblé** : N'envoie un e-mail qu'aux invités dont le statut est "En attente" (`INVITED`).
 - **Facile d'utilisation pour l'invité** : L'e-mail contient un bouton avec un lien direct pour mettre à jour son statut RSVP.
@@ -31,7 +32,8 @@ A simple and efficient Google Apps Script to automatically remind guests who hav
 
 ### Why use this tool?
 
-When organizing meetings, participants often forget to confirm their attendance. This script saves you time by automating reminders:
+**11 PM, the night before a crucial meeting.** You scroll through the guest list and realize half of them haven't bothered to respond. Are you going to chase them down one by one manually, worrying if they'll even show up, or waste precious time tracking everyone's status?
+Stop letting uncertainty drain your time. This script frees you from this mental burden by automating reminders:
 - **Fully automated**: Runs daily (e.g., at 8:01 AM) to check the day's events.
 - **Targeted**: Only sends an email to guests with a "Pending" status (`INVITED`).
 - **User-friendly for guests**: The email includes a direct link button to update their RSVP status easily.
